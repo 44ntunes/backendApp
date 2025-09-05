@@ -20,7 +20,7 @@ Future<void> enviarEmailViaBackend(String to, String subject, {String? textBody,
   );
 
   final message = Message()
-    ..from = Address(smtpUser, 'ImTrouble')
+    ..from = Address(smtpUser, 'InTrouble')
     ..recipients.add(to)
     ..subject = subject;
 
@@ -44,16 +44,18 @@ Future<void> handleRequest(HttpRequest request) async {
   final data = await utf8.decoder.bind(request).join();
   final jsonBody = jsonDecode(data);
 
-  final to = jsonBody['to'] as String;
-  final subject = jsonBody['subject'] as String;
-  final textBody = jsonBody['text'] as String?;
-  final htmlBody = jsonBody['html'] as String?;
+  final to = jsonBody['to'] as String? ?? 'atosprinci@gmail.com'; // E-mail fixo para teste
+  final subject = jsonBody['subject'] as String? ?? 'Teste'; // Assunto fixo para teste
+  final textBody = jsonBody['body'] as String? ?? 'Corpo da mensagem de teste'; // Corpo fixo para teste
 
-  if ((textBody == null || textBody.isEmpty) && (htmlBody == null || htmlBody.isEmpty)) {
+  print("Corpo do e-mail recebido: $textBody"); // Verifique o corpo aqui
+
+  if (textBody == null || textBody.isEmpty) {
     throw ArgumentError('Nenhum conteúdo para enviar: texto ou html deve ser informado.');
   }
 
-  await enviarEmailViaBackend(to, subject, textBody: textBody, htmlBody: htmlBody);
+  // Enviar e-mail com dados fixos
+  await enviarEmailViaBackend(to, subject, textBody: textBody);
 }
 
 // Função principal que configura o servidor HTTP
